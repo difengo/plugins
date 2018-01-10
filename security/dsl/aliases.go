@@ -1128,7 +1128,7 @@ func Pattern(p string) {
 //    }
 //
 //    Method("upper"), func() {
-//        // Use primitive type.and description
+//        // Use primitive type and description
 //        Payload(String, "string to convert to uppercase")
 //    }
 //
