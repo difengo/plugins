@@ -9,6 +9,10 @@ var _ = API("calc", func() {
 	Title("Calculator Service")
 	Description("HTTP service for adding numbers, a goa teaser")
 	Version("1.0.0")
+	Contact(func() {
+		Name("wiserskills")
+		Email("christophe@wiserskills.com")
+	})
 
 	// Server describes a single process listening for client requests. The DSL
 	// defines the set of services that the server hosts as well as hosts details.

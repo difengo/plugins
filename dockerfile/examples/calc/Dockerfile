@@ -28,6 +28,8 @@ LABEL org.label-schema.vcs-ref=$VCS_REF
 LABEL org.label-schema.vendor="wiserskills"
 LABEL org.label-schema.version="1.0.0"
 
+LABEL maintainer="christophe@wiserskills.com"
+
 
 WORKDIR /root/
 

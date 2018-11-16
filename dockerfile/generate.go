@@ -3,6 +3,7 @@ package dockerfile
 import (
 	"net"
 	"net/url"
+	"strings"
 
 	"goa.design/goa/codegen"
 	goadesign "goa.design/goa/design"
@@ -32,7 +33,7 @@ func GenerateDockerFile(genpkg string, root *httpdesign.RootExpr) *codegen.File 
 	path := "Dockerfile"
 
 	var server *goadesign.ServerExpr
-	var ports, email string
+	var ports, company, email string
 
 	if len(root.Design.API.Servers) > 0 {
 		server = root.Design.API.Servers[0]
@@ -56,7 +57,8 @@ func GenerateDockerFile(genpkg string, root *httpdesign.RootExpr) *codegen.File 
 	}
 
 	if root.Design.API.Contact != nil {
-		email = root.Design.API.Contact.Email
+		company = strings.ToLower(root.Design.API.Contact.Name)
+		email = strings.ToLower(root.Design.API.Contact.Email)
 	}
 
 	data := map[string]interface{}{
@@ -65,7 +67,7 @@ func GenerateDockerFile(genpkg string, root *httpdesign.RootExpr) *codegen.File 
 		"ApiVersion":     root.Design.API.Version,
 		"ApiContact":     root.Design.API.Contact,
 		"ServerName":     server.Name,
-		"Company":        "wiserskills",
+		"Company":        company,
 		"Ports":          ports,
 		"ContactEmail":   email,
 	}
