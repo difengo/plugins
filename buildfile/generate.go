@@ -11,7 +11,7 @@ import (
 
 // Register the plugin Generator functions.
 func init() {
-	codegen.RegisterPluginLast("buildfile", "example", Example)
+	codegen.RegisterPluginLast("buildfile", "example", nil, Example)
 }
 
 // Example generates a dockerfile for the example service using API information
