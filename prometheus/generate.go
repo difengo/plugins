@@ -17,12 +17,13 @@ func init() {
 }
 
 type fileToModify struct {
-	file        *codegen.File
-	path        string
-	ServiceName string
-	isServer    bool
-	isService   bool
-	isEndpoints bool
+	file           *codegen.File
+	path           string
+	ServiceName    string
+	isServer       bool
+	isService      bool
+	isEndpoints    bool
+	isEncodeDecode bool
 }
 
 // AddMetricsEndpoint adds a new metrics endpoint to the roots during the preparation phase
@@ -86,11 +87,13 @@ func UpdateServerFiles(genpkg string, roots []eval.Root, files []*codegen.File) 
 				for _, svc := range svr.Services {
 					serverPkg := codegen.SnakeCase(codegen.Goify(svr.Name, true))
 					serverPath := filepath.Join("gen", "http", serverPkg, "server", "server.go")
+					encodeDecodePath := filepath.Join("gen", "http", serverPkg, "server", "encode_decode.go")
 					servicePath := filepath.Join("gen", serverPkg, "service.go")
 					endpointsPath := filepath.Join("gen", serverPkg, "endpoints.go")
 					filesToModify = append(filesToModify, &fileToModify{path: serverPath, ServiceName: svc, isServer: true})
 					filesToModify = append(filesToModify, &fileToModify{path: servicePath, ServiceName: svc, isService: true})
 					filesToModify = append(filesToModify, &fileToModify{path: endpointsPath, ServiceName: svc, isEndpoints: true})
+					filesToModify = append(filesToModify, &fileToModify{path: encodeDecodePath, ServiceName: svc, isEncodeDecode: true})
 				}
 			}
 
@@ -134,6 +137,16 @@ func updateFile(genpkg string, root *httpdesign.RootExpr, f *fileToModify) {
 		for _, s := range f.file.Section("service") {
 			newSource := strings.Replace(s.Source, serviceOldT, serviceNewT, 1)
 			s.Source = newSource
+		}
+	}
+
+	if f.isEncodeDecode {
+		for _, s := range f.file.Section("response-encoder") {
+			source := `{{- if eq .Method.Name "metrics" }}{{- else }}
+			` + s.Source
+			source = strings.Replace(source, `{{ define "response" -}}`, `{{- end }}
+			{{ define "response" -}}`, 1)
+			s.Source = source
 		}
 	}
 
